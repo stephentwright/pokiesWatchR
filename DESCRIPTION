@@ -1,15 +1,14 @@
 Package: pokiesWatchR
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Wrangling and analysing Australian gaming data (pokies)
+Version: 0.1
 Authors@R: 
     person(given = "Stephen",
            family = "Wright",
            role = c("aut", "cre"),
-           email = "st.wright@gmail.coom",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+           email = "st.wright@gmail.coom")
+Description: A collection of data preparation and analysis functions to assist with 
+    exploring the publically available Australian gaming data (poker machines, pokies, slots).
+License: `use_ccby_license()`
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
