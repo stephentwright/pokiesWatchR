@@ -5,9 +5,10 @@ Authors@R:
     person(given = "Stephen",
            family = "Wright",
            role = c("aut", "cre"),
-           email = "st.wright@gmail.coom")
+           email = "st.wright@gmail.com")
 Description: A collection of data preparation and analysis functions to assist with 
     exploring the publically available Australian gaming data (poker machines, pokies, slots).
+    This package supports all information found on https://www.pokieswatch.com.
 License: `use_ccby_license()`
 Encoding: UTF-8
 LazyData: true
