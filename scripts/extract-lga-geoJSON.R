@@ -1,29 +1,35 @@
 # load packages;
 library(sf)
 library(geojsonsf)
+library(tidyverse)
 
 # read file
-fnamePath <- "D:/Repositories/pokies-watch/prototype-html-css-js/resources/lga_shapefile/"
+fnamePath <- './dataExtract/shapefiles/raw-sf/'
 fname <- "LGA_2020_AUST.shp"
 
 # generate raw data files for NSW LGA boundaries
 lgaData <- st_read(paste(fnamePath,fname,sep=""))
-lgaIDs <- lgaData$LGA_CODE20
+lgaId <- lgaData$LGA_CODE20
 lgaNames <- lgaData$LGA_NAME20
 
 lgaNSW <- lgaData$STE_NAME16 == "New South Wales"
-lgaIDsNSW <- lgaIDs[lgaNSW]
+lgaIdNSW <- lgaId[lgaNSW]
 lgaNamesNSW <- lgaNames[lgaNSW]
 
-lgaNSW <- data.frame(lgaIDsNSW,lgaNamesNSW)
-save(lgaNSW,
-     file='D:\\Repositories\\pokies-watch\\prototype-html-css-js\\resources\\premises\\lgaNSW.dat')
+lgaNSW <- data.frame(lgaIdNSW,lgaNamesNSW)
+save(lgaNSW, file='./dataExtract/r-data/lgaNSW.dat')
 
 # define a quick subset function
 ## ToDo: possibly rescale the polygon for smaller foot print;
 subset_sf <- function(sf_name, query) {
   rawOutput <- st_read(sf_name, query=query)
-  geoJsonOutput <- sf_geojson(rawOutput)
+
+  #compress the polygon for small foot print
+  compressOutput <- st_simplify(rawOutput, dTolerance=150)
+
+  #output
+  geoJsonOutput <- sf_geojson(compressOutput)
+
   return(geoJsonOutput)
 }
 
@@ -31,30 +37,16 @@ subset_sf <- function(sf_name, query) {
 extractQuery <- paste("SELECT * FROM \"",
                       unlist(strsplit(fname, ".", fixed=TRUE))[1],
                       "\" WHERE LGA_CODE20 = '",
-                      lgaIDsNSW,
+                      lgaIdNSW,
                       "'",sep='')
 
 # define the output path
-outPath <- "D:/Repositories/pokies-watch/prototype-html-css-js/resources/geoJSON/"
+outPath <- "./dataExtract/web-output/"
 
 # loop - extract, convert, output
-for (i in 1:length(lgaIDsNSW)) {
+for (i in 1:length(lgaIdNSW)) {
   geoJSON <- subset_sf(paste(fnamePath,fname,sep=""),
                        extractQuery[i])
-  write(geoJSON,file=paste(outPath,lgaIDsNSW[i],'.geojson',sep=''))
+  write(geoJSON,file=paste(outPath,lgaIdNSW[i],'.geojson',sep=''))
 }
 
-
-
-
-
-
-working <- "SELECT * FROM \"LGA_2020_AUST\" WHERE LGA_CODE20 = '11650'"
-check <- extractQuery[26]
-
-
-centralCoast <- st_read(paste(fnamePath,fname,sep=""),
-                        query = extractQuery[26])
-
-centralCoastGeoJSON <- sf_geojson(centralCoast)
-write(centralCoastGeoJSON,file='d:/Repositories/pokies-watch/prototype-html-css-js/resources/centralCoast.json')
