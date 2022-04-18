@@ -50,10 +50,16 @@ expandNetProfit <- expandNetProfit %>%
 # load up the Adult population per LGA
 load(file='./dataExtract/r-data/adultsLga.dat')
 expandNetProfit <- left_join(expandNetProfit,adultsLga,by=c('lgaIdNSW'='lgaCode'))
+adultsCombined <- expandNetProfit %>%
+                    group_by(`Local Government Area (LGA)`) %>%
+                      summarise(popCombine=sum(adults))
+expandNetProfit <- left_join(expandNetProfit,adultsCombined)
+
+
 
 # calculate the featured statistic;
 expandNetProfit <- expandNetProfit %>%
-                    mutate(featuredStat=floor(`Net Profit`/adults/18))
+                    mutate(featuredStat=floor(`Net Profit`/popCombine/18))
 
 # Todo: need to fix up the groups for combined.
 
@@ -63,6 +69,7 @@ keepLGAData <- expandNetProfit %>%
                       lgaName,
                       lgaNameCombine,
                       adults,
+                      combineAdults,
                       rank,
                       profit,
                       tax,
