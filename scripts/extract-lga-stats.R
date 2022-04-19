@@ -59,17 +59,15 @@ expandNetProfit <- left_join(expandNetProfit,adultsCombined)
 
 # calculate the featured statistic;
 expandNetProfit <- expandNetProfit %>%
-                    mutate(featuredStat=floor(`Net Profit`/popCombine/18))
-
-# Todo: need to fix up the groups for combined.
+                    mutate(featuredStat=floor(`Net Profit`/popCombine/18),
+                           popCombine=comma(popCombine,accuracy = 1))
 
 # prepare data for JSON dump
 keepLGAData <- expandNetProfit %>%
                select(lgaIdNSW,
                       lgaName,
                       lgaNameCombine,
-                      adults,
-                      combineAdults,
+                      popCombine,
                       rank,
                       profit,
                       tax,
@@ -78,6 +76,10 @@ keepLGAData <- expandNetProfit %>%
                       `Electronic Gaming Machine numbers\r\nas at 30 May 2021`) %>%
                rename(EGMs=`Electronic Gaming Machine numbers\r\nas at 30 May 2021`,
                       premisesCount=`Premises Count`);
+
+keepLGAData <- keepLGAData %>%
+                  mutate(premisesCount=comma(premisesCount,accuracy = 1),
+                         EGMs = comma(EGMs, accuracy = 1))
 
 # export as JSON -- break into individual files
 lgaId <- unique(keepLGAData$lgaIdNSW)
